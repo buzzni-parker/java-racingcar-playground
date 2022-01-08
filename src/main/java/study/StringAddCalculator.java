@@ -8,21 +8,21 @@ public class StringAddCalculator {
     public StringAddCalculator() {
     }
 
-    public List<String> split(String string, String regex) throws NullPointerException {
+    private static List<String> split(String string, String regex) throws NullPointerException {
         if (regex != null)
             string = string.replaceAll(regex, ",");
 
-        string = string.replaceAll(";", ",");
+        string = string.replaceAll(":", ",");
         
         String[] strings = string.split(",");
         return Arrays.asList(strings);
     }
 
-    public String removeCustomRegex(String string) {
+    private static String removeCustomRegex(String string) {
         return string.substring(string.indexOf("\n")+1, string.length());
     }
 
-    public String getCustomRegex(String string) {
+    private static String getCustomRegex(String string) {
         String regex;
         try {
             regex = string.substring(string.indexOf("//") + 2, string.indexOf("\n"));
@@ -32,7 +32,7 @@ public class StringAddCalculator {
         return regex;
     }
 
-    public Integer add(List<String> strings) {
+    private static Integer add(List<String> strings) {
         int total = 0;
         for (String string : strings) {
             total += convertNumber(string);
@@ -40,7 +40,7 @@ public class StringAddCalculator {
         return total;
     }
 
-    private Integer convertNumber(String string) {
+    private static Integer convertNumber(String string) {
         Integer number;
         try {
             number = Integer.parseInt(string);
@@ -52,7 +52,9 @@ public class StringAddCalculator {
         return number;
     }
 
-    public Integer calculate(String string) {
+    public static int splitAndSum(String string) {
+        if (string == null)
+            return 0;
         if (string.isEmpty())
             return 0;
         String regex = getCustomRegex(string);

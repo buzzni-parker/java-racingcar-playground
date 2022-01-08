@@ -1,55 +1,47 @@
 package study;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
-import java.util.Arrays;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class StringAddCalculatorTest {
-    StringAddCalculator string_add_calculator;
+    @Test
+    public void splitAndSum_null_또는_빈문자() {
+        int result = StringAddCalculator.splitAndSum(null);
+        assertThat(result).isEqualTo(0);
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        string_add_calculator = new StringAddCalculator();
+        result = StringAddCalculator.splitAndSum("");
+        assertThat(result).isEqualTo(0);
     }
 
     @Test
-    void split() {
-        List<String> strings = string_add_calculator.split("1,2;3", null);
-        assertEquals(Arrays.asList("1", "2", "3"), strings);
-    }
-    
-    @Test
-    void add() {
-        List<String> strings = Arrays.asList("1", "2", "3");
-        assertEquals(6, string_add_calculator.add(strings));
-
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
-            string_add_calculator.add(Arrays.asList("1", "-2", "3"));
-        }).withMessageMatching("negative number");
+    public void splitAndSum_숫자하나() throws Exception {
+        int result = StringAddCalculator.splitAndSum("1");
+        assertThat(result).isEqualTo(1);
     }
 
     @Test
-    void getCustomRegex() {
-        String regex1 = string_add_calculator.getCustomRegex("//:\n1,2;3");
-        assertEquals(":", regex1);
-        String regex2 = string_add_calculator.getCustomRegex("1,2;3");
-        assertEquals(null, regex2);
+    public void splitAndSum_쉼표구분자() throws Exception {
+        int result = StringAddCalculator.splitAndSum("1,2");
+        assertThat(result).isEqualTo(3);
     }
 
     @Test
-    void removeCustomRegex() {
-        String string = string_add_calculator.removeCustomRegex("//:\n1,2;3");
-        assertEquals("1,2;3", string);
+    public void splitAndSum_쉼표_또는_콜론_구분자() throws Exception {
+        int result = StringAddCalculator.splitAndSum("1,2:3");
+        assertThat(result).isEqualTo(6);
     }
 
     @Test
-    void calculate() {
-        assertEquals(10, string_add_calculator.calculate("//:\n1,2;3:4"));
+    public void splitAndSum_custom_구분자() throws Exception {
+        int result = StringAddCalculator.splitAndSum("//;\n1;2;3");
+        assertThat(result).isEqualTo(6);
+    }
+
+    @Test
+    public void splitAndSum_negative() throws Exception {
+        assertThatThrownBy(() -> StringAddCalculator.splitAndSum("-1,2,3"))
+                .isInstanceOf(RuntimeException.class);
     }
 }
