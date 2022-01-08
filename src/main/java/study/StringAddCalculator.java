@@ -2,34 +2,17 @@ package study;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringAddCalculator {
-
-    public StringAddCalculator() {
-    }
-
     private static List<String> split(String string, String regex) throws NullPointerException {
-        if (regex != null)
-            string = string.replaceAll(regex, ",");
+        if (!regex.isEmpty())
+            regex += "|";
 
-        string = string.replaceAll(":", ",");
-        
-        String[] strings = string.split(",");
-        return Arrays.asList(strings);
-    }
+        regex += ",|:";
 
-    private static String removeCustomRegex(String string) {
-        return string.substring(string.indexOf("\n")+1, string.length());
-    }
-
-    private static String getCustomRegex(String string) {
-        String regex;
-        try {
-            regex = string.substring(string.indexOf("//") + 2, string.indexOf("\n"));
-        } catch (StringIndexOutOfBoundsException e) {
-            regex = null;
-        }
-        return regex;
+        return Arrays.asList(string.split(regex));
     }
 
     private static Integer add(List<String> strings) {
@@ -57,10 +40,15 @@ public class StringAddCalculator {
             return 0;
         if (string.isEmpty())
             return 0;
-        String regex = getCustomRegex(string);
-        string = removeCustomRegex(string);
-        List<String> strings = split(string, regex);
-        return add(strings);
+
+        String regex = "";
+        Matcher m = Pattern.compile("//(.)\n(.*)").matcher(string);
+        if (m.find()) {
+            regex = m.group(1);
+            string = m.group(2);
+        }
+
+        return add(split(string, regex));
     }
 
 }
